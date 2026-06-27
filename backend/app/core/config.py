@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     
     # Firebase
+    FIREBASE_CREDENTIALS_JSON: Optional[str] = None
     FIREBASE_CREDENTIALS_PATH: str = "./service-account.json"
     
     # CORS
