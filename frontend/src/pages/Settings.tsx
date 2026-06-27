@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Settings2, Cpu, Activity, Paintbrush, Monitor, Moon, Sun, AlertCircle, LayoutPanelLeft, Bell, MapPin, Database, Globe, Calendar } from 'lucide-react';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { useTheme } from '../components/ThemeProvider';
 
 export function Settings() {

@@ -1,4 +1,4 @@
-import { Info, Code2, Server, Brain, Shield, HeartHandshake, GitBranch, Terminal } from 'lucide-react';
+import { Code2, Server, Brain, Shield, HeartHandshake, GitBranch, Terminal } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 
 export function About() {

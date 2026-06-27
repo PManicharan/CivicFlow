@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { Map, Menu, X, PanelLeftClose, PanelLeftOpen, LayoutDashboard, RadioReceiver, Settings, LifeBuoy } from 'lucide-react';
@@ -42,7 +42,14 @@ export function RootLayout() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  const navItems = [
+  interface NavItem {
+    type?: 'heading' | 'divider';
+    to?: string;
+    icon?: React.ElementType;
+    label?: string;
+  }
+
+  const navItems: NavItem[] = [
     { type: 'heading', label: 'Menu' },
     { to: '/operations', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/signal', icon: RadioReceiver, label: 'Submit Signal' },
@@ -154,9 +161,10 @@ export function RootLayout() {
                     if (item.type === 'divider') {
                       return <div key={idx} className="h-px w-full bg-border my-4" />;
                     }
+                    const Icon = item.icon;
                     return (
                       <NavLink key={idx} to={item.to!} className={({isActive}) => `flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${isActive ? "bg-primary/10 text-primary font-bold border-l-4 border-primary shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground hover:-translate-y-px hover:shadow-sm border-l-4 border-transparent"}`}>
-                        <item.icon className="w-5 h-5" />
+                        {Icon && <Icon className="w-5 h-5" />}
                         {item.label}
                       </NavLink>
                     );
@@ -190,7 +198,7 @@ export function RootLayout() {
                 if (item.type === 'divider') {
                   return <div key={idx} className="h-px w-full bg-border my-4" />;
                 }
-                
+                const Icon = item.icon;
                 return (
                   <NavLink 
                     key={idx} 
@@ -198,7 +206,7 @@ export function RootLayout() {
                     title={isCollapsed ? item.label : undefined}
                     className={({isActive}) => `flex items-center gap-3 py-3 rounded-xl text-sm transition-all duration-200 ${isActive ? "bg-primary/10 text-primary font-bold border-l-4 border-primary shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground hover:-translate-y-px hover:shadow-sm border-l-4 border-transparent"} ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
                   >
-                    <item.icon className="w-5 h-5 shrink-0" />
+                    {Icon && <Icon className="w-5 h-5 shrink-0" />}
                     <AnimatePresence>
                       {!isCollapsed && (
                         <motion.span 

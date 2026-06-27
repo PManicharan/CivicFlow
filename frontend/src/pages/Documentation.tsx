@@ -1,4 +1,4 @@
-import { Book, Terminal, Settings2, Cpu, Cloud, GitPullRequest } from 'lucide-react';
+import { Terminal, Settings2, Cpu, Cloud, GitPullRequest } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 
 export function Documentation() {

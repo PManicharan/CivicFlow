@@ -72,7 +72,7 @@ export function CommunitySignal() {
   
   const [evidenceAssessment, setEvidenceAssessment] = useState<any | null>(null);
   const [isAssessing, setIsAssessing] = useState(false);
-  const [uploadStatusText, setUploadStatusText] = useState('Uploading...');
+
   
   const [isLocating, setIsLocating] = useState(false);
   const [mapCoords, setMapCoords] = useState<{lat: number, lon: number} | null>(null);
@@ -83,16 +83,6 @@ export function CommunitySignal() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const totalSteps = 4;
 
-  useEffect(() => {
-    if (isAssessing) {
-      setUploadStatusText('Uploading...');
-      const t1 = setTimeout(() => setUploadStatusText('Processing...'), 1000);
-      const t2 = setTimeout(() => setUploadStatusText('Waiting for AI analysis...'), 2000);
-      return () => { clearTimeout(t1); clearTimeout(t2); };
-    } else if (evidenceAssessment) {
-      setUploadStatusText('AI Ready');
-    }
-  }, [isAssessing, evidenceAssessment]);
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
@@ -104,10 +94,10 @@ export function CommunitySignal() {
       const { latitude, longitude, accuracy: locAccuracy } = position.coords;
       setMapCoords({ lat: latitude, lon: longitude });
       setAccuracy(locAccuracy);
-      const address = await reverseGeocode(latitude, longitude);
+      await reverseGeocode(latitude, longitude);
       toast.success("Location detected successfully");
       setIsLocating(false);
-    }, (err) => {
+    }, (_err) => {
       toast.error("Location permission denied. Please enter manually.");
       setIsLocating(false);
     });

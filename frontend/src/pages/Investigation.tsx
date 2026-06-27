@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { CheckCircle2, Circle, Loader2, AlertTriangle, ShieldCheck, MapPin, Building2, Send, BrainCircuit, ScanSearch, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, Circle, Loader2, AlertTriangle, MapPin, Building2, Send, BrainCircuit, ScanSearch, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TIMELINE_STEPS = [
@@ -27,7 +27,6 @@ export function Investigation() {
   const navigate = useNavigate();
   
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState("Open");
   
   const handleUpdateStatus = async (newStatus: string) => {
     if (!report?.caseId) return;
@@ -41,7 +40,7 @@ export function Investigation() {
       if (!response.ok) {
         throw new Error("Failed to update status");
       }
-      setCurrentStatus(newStatus);
+
       alert(`Case successfully marked as ${newStatus}`);
       navigate('/operations');
     } catch (err: any) {
@@ -120,13 +119,7 @@ export function Investigation() {
     );
   }
 
-  const confidenceMetrics = [
-    { label: "Image Quality", value: 92 },
-    { label: "Location Match", value: 100 },
-    { label: "Evidence Completeness", value: 85 },
-    { label: "Duplicate Risk", value: 98 },
-    { label: "Metadata Integrity", value: 100 }
-  ];
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl animate-fade-in">

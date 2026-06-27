@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { FileSearch } from 'lucide-react';
 import { Button } from './Button';
 import { motion } from 'framer-motion';
