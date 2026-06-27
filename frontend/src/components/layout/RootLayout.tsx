@@ -240,7 +240,7 @@ export function RootLayout() {
                 <Link to="/documentation" className="hover:text-foreground transition-colors">Documentation</Link>
                 <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
                 <Link to="/support" className="hover:text-foreground transition-colors">Support</Link>
-                <a href="https://github.com/PendemManicharan/CivicFlow" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
+                <a href="https://github.com/PManicharan/CivicFlow" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
               </div>
               <div className="text-sm text-muted-foreground flex items-center gap-4">
                 <span>v1.0.0-rc</span>
@@ -289,7 +289,7 @@ export function RootLayout() {
               <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
                 <p>Built by Pendem Manicharan.</p>
                 <div className="flex items-center gap-4">
-                  <a href="https://github.com/PendemManicharan/CivicFlow" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors text-xs font-medium">GITHUB</a>
+                  <a href="https://github.com/PManicharan/CivicFlow" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors text-xs font-medium">GITHUB</a>
                   <a href="https://twitter.com/civicflow" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors text-xs font-medium">TWITTER / X</a>
                 </div>
               </div>

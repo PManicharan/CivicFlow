@@ -68,7 +68,7 @@ export function Support() {
           <p className="text-sm text-muted-foreground flex-1">
             CivicFlow is open source. Check out the code, contribute to the project, or fork it for your own use.
           </p>
-          <Button variant="outline" className="w-full justify-between group shadow-subtle hover:shadow-md hover:-translate-y-0.5 transition-all" onClick={() => window.open('https://github.com/PendemManicharan/CivicFlow', '_blank')}>
+          <Button variant="outline" className="w-full justify-between group shadow-subtle hover:shadow-md hover:-translate-y-0.5 transition-all" onClick={() => window.open('https://github.com/PManicharan/CivicFlow', '_blank')}>
             View on GitHub <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </Button>
         </Card>
@@ -81,7 +81,7 @@ export function Support() {
           <p className="text-sm text-muted-foreground flex-1">
             Found a bug or have a feature request? Let us know on our issue tracker so we can improve the platform.
           </p>
-          <Button variant="outline" className="w-full justify-between group" onClick={() => window.open('https://github.com/PendemManicharan/CivicFlow/issues', '_blank')}>
+          <Button variant="outline" className="w-full justify-between group" onClick={() => window.open('https://github.com/PManicharan/CivicFlow/issues', '_blank')}>
             Open Issue <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </Button>
         </Card>
