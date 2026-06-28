@@ -25,11 +25,16 @@ export function WorkspaceLogin() {
     setError('');
     setLoading(true);
     try {
-      await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      try {
+        await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      } catch (err) {
+        console.warn('Persistence error:', err);
+      }
       await signInWithEmailAndPassword(auth, email, password);
       const from = (location.state as any)?.from?.pathname || '/workspace/operations';
       navigate(from, { replace: true });
-    } catch {
+    } catch (err: any) {
+      console.error('Login error:', err);
       setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);

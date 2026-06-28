@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
-import { Menu, X, PanelLeftClose, PanelLeftOpen, LayoutDashboard, Settings, BrainCircuit, LogOut, ChartNoAxesCombined } from 'lucide-react';
+import { Menu, X, PanelLeftClose, PanelLeftOpen, LayoutDashboard, Settings, BrainCircuit, LogOut, PlusCircle, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { auth } from '../../lib/firebase';
@@ -61,14 +61,13 @@ export function WorkspaceLayout() {
   }
 
   const navItems: NavItem[] = [
-    { type: 'heading', label: 'Operations' },
+    { type: 'heading', label: 'MENU' },
     { to: '/workspace/operations', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/workspace/analytics', icon: ChartNoAxesCombined, label: 'Analytics' },
-    { type: 'divider' },
-    { type: 'heading', label: 'System' },
+    { to: '/signal', icon: PlusCircle, label: 'Submit Signal' },
+    { type: 'heading', label: 'SYSTEM' },
     { to: '/workspace/settings', icon: Settings, label: 'Settings' },
-    { type: 'divider' },
-    { type: 'action', icon: LogOut, label: 'Sign Out', onClick: handleLogout }
+    { to: '/workspace/support', icon: HelpCircle, label: 'Support' },
+    { type: 'action', icon: LogOut, label: 'Logout', onClick: handleLogout }
   ];
 
   return (

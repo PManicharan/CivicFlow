@@ -1,7 +1,7 @@
-import { HelpCircle, Mail, Code2, FileText, Bug, ExternalLink, ChevronDown, Ticket } from 'lucide-react';
+import { HelpCircle, Mail, Code2, FileText, Bug, ExternalLink, ChevronDown } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { EmptyState } from '../components/ui/EmptyState';
+
 import { toast } from 'sonner';
 
 export function Support() {
@@ -33,19 +33,6 @@ export function Support() {
         </p>
       </div>
 
-      <div className="pt-2 pb-6 border-b border-border">
-        <h2 className="text-xl font-semibold mb-4">My Support Tickets</h2>
-        <div className="h-64">
-          <EmptyState 
-            title="No recent tickets" 
-            description="You haven't opened any support requests recently."
-            icon={<Ticket className="w-12 h-12 text-muted-foreground/50" />}
-            actionLabel="Open New Ticket"
-            onAction={() => toast.success("Ticket creation flow will be available in the next release.")}
-          />
-        </div>
-      </div>
-
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="p-6 flex flex-col space-y-4">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
@@ -55,7 +42,7 @@ export function Support() {
           <p className="text-sm text-muted-foreground flex-1">
             Read the full architectural overview, deployment guides, and API documentation for integrating CivicFlow.
           </p>
-          <Button variant="outline" className="w-full justify-between group">
+          <Button variant="outline" className="w-full justify-between group shadow-subtle hover:shadow-md hover:-translate-y-0.5 transition-all" onClick={() => window.open('https://github.com/PManicharan/CivicFlow#readme', '_blank')}>
             Read Docs <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </Button>
         </Card>

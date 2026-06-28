@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Settings2, Cpu, Activity, Paintbrush, Monitor, Moon, Sun, AlertCircle, LayoutPanelLeft, Bell, MapPin, Database, Globe, Calendar } from 'lucide-react';
+import { Settings2, Cpu, Activity, Paintbrush, Monitor, Moon, Sun, AlertCircle, Database, Calendar, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card } from '../components/ui/Card';
 import { useTheme } from '../components/ThemeProvider';
 
@@ -10,18 +11,7 @@ export function Settings() {
   const [health, setHealth] = useState<any>(null);
   const [isHealthLoading, setIsHealthLoading] = useState(true);
 
-  // Preference stubs
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('civicflow-sidebar-collapsed') === 'true');
-  const [desktopNotifs, setDesktopNotifs] = useState(false);
-  const [rememberLocation, setRememberLocation] = useState(true);
 
-  const handleSidebarToggle = () => {
-    const newValue = !sidebarCollapsed;
-    setSidebarCollapsed(newValue);
-    localStorage.setItem('civicflow-sidebar-collapsed', String(newValue));
-    // Dispatch a custom event to notify RootLayout if necessary, or let it apply on next render
-    window.dispatchEvent(new Event('storage'));
-  };
 
   useEffect(() => {
     async function checkHealth() {
@@ -83,73 +73,24 @@ export function Settings() {
                 </button>
               </div>
             </div>
-
-            <div className="pt-4 border-t border-border flex items-center justify-between">
-              <div>
-                <h3 className="font-medium flex items-center gap-2">
-                  <LayoutPanelLeft className="w-4 h-4 text-muted-foreground" />
-                  Collapse Sidebar Default
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">Start with an icon-only sidebar.</p>
-              </div>
-              <button 
-                onClick={handleSidebarToggle}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${sidebarCollapsed ? 'bg-primary' : 'bg-muted'}`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${sidebarCollapsed ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
-            </div>
-
-            <div className="pt-4 border-t border-border flex items-center justify-between">
-              <div>
-                <h3 className="font-medium flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-muted-foreground" />
-                  Language
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">Interface localization.</p>
-              </div>
-              <div className="px-3 py-1 bg-muted rounded text-sm text-muted-foreground cursor-not-allowed">
-                English (US)
-              </div>
-            </div>
           </Card>
 
           <div className="flex items-center gap-2 text-lg font-medium border-b border-border pb-2 pt-4">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            Notifications & Privacy
+            <HelpCircle className="w-5 h-5 text-muted-foreground" />
+            Support
           </div>
 
           <Card className="p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-medium flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-muted-foreground" />
-                  Desktop Notifications
+                  Help Center
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1">Get alerted for case updates.</p>
+                <p className="text-sm text-muted-foreground mt-1">Get help and view documentation.</p>
               </div>
-              <button 
-                onClick={() => setDesktopNotifs(!desktopNotifs)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${desktopNotifs ? 'bg-primary' : 'bg-muted'}`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${desktopNotifs ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
-            </div>
-            
-            <div className="pt-4 border-t border-border flex items-center justify-between">
-              <div>
-                <h3 className="font-medium flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  Remember Recent Locations
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">Cache GPS for faster reporting.</p>
-              </div>
-              <button 
-                onClick={() => setRememberLocation(!rememberLocation)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${rememberLocation ? 'bg-primary' : 'bg-muted'}`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${rememberLocation ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
+              <Link to="/workspace/support" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90">
+                View Support
+              </Link>
             </div>
           </Card>
         </div>

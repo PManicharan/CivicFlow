@@ -5,7 +5,7 @@ import { Badge } from '../components/ui/Badge';
 import { ServerCrash, SearchX, Globe } from 'lucide-react';
 import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 export function CommunityDashboard() {
@@ -20,9 +20,14 @@ export function CommunityDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const q = query(collection(db, 'signals'), orderBy('created_at', 'desc'));
+      const q = query(collection(db, 'signals'));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        data.sort((a: any, b: any) => {
+          const timeA = new Date(a.created_at || a.createdAt || 0).getTime();
+          const timeB = new Date(b.created_at || b.createdAt || 0).getTime();
+          return timeB - timeA;
+        });
         setSignals(data);
         setLoading(false);
       }, (err) => {
