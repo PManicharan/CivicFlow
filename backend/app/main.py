@@ -64,6 +64,7 @@ def create_app() -> FastAPI:
             "status": "healthy",
             "environment": settings.ENVIRONMENT,
             "gemini_configured": gemini_module.gemini_configured,
+            "gemini_api_key_present": bool(settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "your_gemini_api_key_here"),
             "firebase_configured": firebase_module.firebase_configured,
             "firestore_connectivity": firestore_conn,
             "storage_connectivity": storage_conn,

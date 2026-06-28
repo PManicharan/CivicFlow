@@ -225,8 +225,12 @@ export function Settings() {
                 <div className="flex items-center gap-2">
                   {isHealthLoading ? (
                     <span className="text-sm text-muted-foreground">Checking...</span>
-                  ) : health?.gemini_configured ? (
-                    <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Ready</span>
+                  ) : health?.status === 'healthy' ? (
+                    health?.gemini_configured ? (
+                      <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">AI Engine Ready</span>
+                    ) : (
+                      <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400">AI Engine (Fallback Mode)</span>
+                    )
                   ) : (
                     <span className="text-sm font-medium text-error">Not Configured</span>
                   )}
