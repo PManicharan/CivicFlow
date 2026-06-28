@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { Loading } from '../components/ui/Loading';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { SafeImage } from '../components/ui/SafeImage';
 
 // Fix leaflet marker icon issue in React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -183,7 +184,11 @@ export function CommunitySignal() {
         let serverMessage = '';
         try {
           const errBody = await response.json();
-          serverMessage = errBody.detail || '';
+          if (Array.isArray(errBody.detail)) {
+            serverMessage = errBody.detail.map((e: any) => `${e.loc.join('.')}: ${e.msg}`).join(', ');
+          } else {
+            serverMessage = errBody.detail || '';
+          }
         } catch { /* response wasn't JSON */ }
 
         if (response.status === 413) throw new Error(serverMessage || "Image file is too large. Max size is 10MB.");
@@ -307,8 +312,8 @@ export function CommunitySignal() {
                     <span className="font-medium">Image Uploaded Successfully</span>
                   </div>
                   
-                  <div className="relative w-full h-56 rounded-xl overflow-hidden border border-border">
-                    <img src={image} loading="lazy" alt="Evidence Preview" className="w-full h-full object-cover" />
+                  <div className="relative w-full h-56 rounded-xl overflow-hidden border border-border flex">
+                    <SafeImage src={image} loading="lazy" alt="Evidence Preview" className="w-full h-full object-cover" />
                   </div>
                   
                   <div className="flex gap-2">

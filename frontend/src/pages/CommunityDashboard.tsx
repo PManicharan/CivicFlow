@@ -3,35 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { ServerCrash, SearchX, Globe, MapPin, Building2, Calendar, ArrowRight, ShieldCheck, X, Image as ImageIcon } from 'lucide-react';
+import { ServerCrash, SearchX, Globe, MapPin, Building2, Calendar, ArrowRight, ShieldCheck, X } from 'lucide-react';
 import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-/**
- * Resolves image URLs that the backend may return as relative paths or
- * localhost URLs (from the local-storage fallback) into absolute URLs
- * reachable from the browser in production.
- */
-function resolveImageUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  // Already an absolute http(s) URL pointing somewhere other than localhost
-  if (/^https?:\/\//.test(url) && !url.includes('localhost')) return url;
-  // Relative path like /uploads/CF-XXXX.jpg
-  if (url.startsWith('/')) return `${API_URL}${url}`;
-  // Localhost fallback URL – swap origin to the real API host
-  if (url.includes('localhost')) {
-    try {
-      const parsed = new URL(url);
-      return `${API_URL}${parsed.pathname}`;
-    } catch {
-      return url;
-    }
-  }
-  return url;
-}
+import { SafeImage } from '../components/ui/SafeImage';
 
 export function CommunityDashboard() {
   const navigate = useNavigate();
@@ -53,13 +29,25 @@ export function CommunityDashboard() {
         if (!response.ok) throw new Error('Failed to fetch signals');
         
         const data = await response.json();
-        // Deduplicate by signal ID to guard against backend-side duplicates
-        const seen = new Set<string>();
+        
+        // Sort newest first to ensure we keep the latest when deduplicating
+        data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        
+        // Deduplicate by signal ID and content signature
+        const seenId = new Set<string>();
+        const seenContent = new Set<string>();
+        
         const unique = data.filter((s: any) => {
-          if (seen.has(s.id)) return false;
-          seen.add(s.id);
+          if (seenId.has(s.id)) return false;
+          
+          const signature = `${s.location}|${s.description}|${s.created_at}`;
+          if (seenContent.has(signature)) return false;
+          
+          seenId.add(s.id);
+          seenContent.add(signature);
           return true;
         });
+        
         setSignals(unique);
         setError(null);
       } catch (err: any) {
@@ -206,15 +194,8 @@ export function CommunityDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Left Column: Image and Details */}
                   <div className="space-y-6">
-                    <div className="rounded-xl overflow-hidden border border-border bg-muted aspect-video relative">
-                      {resolveImageUrl(selectedSignal.image_url) ? (
-                        <img src={resolveImageUrl(selectedSignal.image_url)!} alt="Evidence" className="w-full h-full object-cover" loading="lazy" />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground flex-col gap-2">
-                          <ImageIcon className="w-8 h-8 opacity-50" />
-                          <span className="text-sm">No evidence image</span>
-                        </div>
-                      )}
+                    <div className="rounded-xl overflow-hidden border border-border bg-muted aspect-video relative flex">
+                      <SafeImage src={selectedSignal.image_url} alt="Evidence" className="w-full h-full object-cover" loading="lazy" />
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
@@ -440,19 +421,13 @@ export function CommunityDashboard() {
                 className="h-full"
               >
                 <Card className="shadow-subtle h-full flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
-                  <div className="relative h-48 overflow-hidden bg-muted">
-                    {resolveImageUrl(signal.image_url) ? (
-                      <img 
-                        src={resolveImageUrl(signal.image_url)!} 
-                        alt="Evidence" 
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <ImageIcon className="w-10 h-10 text-muted-foreground/30" />
-                      </div>
-                    )}
+                  <div className="relative h-48 overflow-hidden bg-muted flex">
+                    <SafeImage
+                      src={signal.image_url} 
+                      alt="Evidence" 
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    />
                     <div className="absolute top-3 left-3 flex gap-2">
                       <Badge variant="outline" className={`backdrop-blur-md bg-background/80 ${getStatusColor(signal.status || 'Open')}`}>
                         {signal.status || 'Open'}

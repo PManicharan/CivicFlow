@@ -67,8 +67,6 @@ async def create_signal(
     image: UploadFile = File(...)
 ):
     """Ingests signal with full security validation."""
-    if not gemini_module.gemini_configured:
-        raise HTTPException(status_code=503, detail="Gemini API key is not configured. AI analysis is unavailable.")
     if not firebase_module.firebase_configured:
         raise HTTPException(status_code=503, detail="Firebase credentials not found. Database features are unavailable.")
         

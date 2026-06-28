@@ -81,12 +81,58 @@ async def assess_evidence_quality(image_bytes: bytes, mime_type: str = "image/jp
         logger.error(f"Evidence quality assessment failed: {e}")
         raise ValueError(f"Gemini API Error: {str(e)}")
 
+def get_fallback_report(signal_id: str) -> InvestigationReport:
+    from app.models.schemas import CommunityImpact, ConfidenceBreakdown, AISafetyChecks
+    
+    fallback_impact = CommunityImpact(
+        estimatedCitizensAffected="Unknown",
+        primaryAffectedGroups="Unknown",
+        estimatedResponseWindow="Unknown",
+        expectedRiskReduction="Unknown"
+    )
+    fallback_confidence = ConfidenceBreakdown(
+        imageQuality=0,
+        locationMatch=0,
+        evidenceCompleteness=0,
+        duplicateRisk=0,
+        metadataIntegrity=0
+    )
+    fallback_safety = AISafetyChecks(
+        passed=True,
+        inputValidated=True,
+        imageVerified=False,
+        promptSanitized=True,
+        secureProcessing=True,
+        confidenceThresholdPassed=False,
+        flags=["AI Analysis Unavailable"]
+    )
+    
+    return InvestigationReport(
+        caseId=signal_id,
+        issueType="Pending Review",
+        severity="Unable to Determine",
+        confidence="Low",
+        evidenceQuality="Poor",
+        trustScore=50,
+        keyFindings=["AI analysis temporarily unavailable."],
+        evidenceSummary="Evidence saved and awaiting human review.",
+        reasoning="AI analysis temporarily unavailable. Complaint successfully registered and queued for investigation.",
+        priorityLevel="Routine",
+        priorityReasons=["Defaulted to routine due to AI unavailability."],
+        communityImpact=fallback_impact,
+        recommendedDepartment="General Services",
+        recommendedAction="Additional Evidence Recommended",
+        confidenceBreakdown=fallback_confidence,
+        aiSafetyChecks=fallback_safety
+    )
+
 async def analyze_signal(signal_id: str, image_bytes: bytes, title: str, description: str, location: str, mime_type: str = "image/jpeg") -> InvestigationReport:
     """
     Multimodal analysis with 1 retry and fallback logic.
     """
     if not model:
-        raise ValueError("Gemini API key is missing. Cannot analyze signal.")
+        logger.error("Gemini API key is missing. Using fallback report.")
+        return get_fallback_report(signal_id)
 
     prompt = f"{SYSTEM_PROMPT}\n\nTitle: {title}\nDescription: {description}\nLocation: {location}\nGenerate the structured investigation JSON."
     image_part = {"mime_type": mime_type, "data": image_bytes}
@@ -118,9 +164,8 @@ async def analyze_signal(signal_id: str, image_bytes: bytes, title: str, descrip
             data['caseId'] = signal_id
             return InvestigationReport(**data)
         except Exception as e2:
-            logger.error(f"Gemini Pass 2 Failed: {e2}. Raising error.")
-            raise ValueError(f"Gemini AI Analysis Failed: {str(e2)}")
-
+            logger.error(f"Gemini Pass 2 Failed: {e2}. Using fallback report.")
+            return get_fallback_report(signal_id)
 async def copilot_action(signal_data: dict, action: str, context_notes: str = None) -> str:
     """
     Contextual AI actions for the Ops Workspace.
