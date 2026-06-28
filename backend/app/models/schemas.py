@@ -52,6 +52,12 @@ class EvidenceQualityAssessment(BaseModel):
     subjectVisibility: int = Field(description="0-100 score of subject visibility")
     contextRichness: int = Field(description="0-100 score of context richness")
 
+class TimelineEvent(BaseModel):
+    status: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    note: Optional[str] = None
+    officer_id: Optional[str] = None
+
 class SignalMetadata(BaseModel):
     id: str
     title: str
@@ -61,6 +67,17 @@ class SignalMetadata(BaseModel):
     created_at: datetime
     status: str = "Open"
     report: Optional[InvestigationReport] = None
+    timeline: List[TimelineEvent] = Field(default_factory=list)
+    resolution_image_url: Optional[str] = None
+    officer_notes: Optional[str] = None
+    assigned_to: Optional[str] = None
 
 class StatusUpdateRequest(BaseModel):
     status: str
+    note: Optional[str] = None
+    officer_id: Optional[str] = None
+    resolution_image_url: Optional[str] = None
+
+class CopilotRequest(BaseModel):
+    action: str
+    context: Optional[str] = None

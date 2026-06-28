@@ -8,10 +8,14 @@ import app.core.firebase as firebase_module
 import app.services.gemini as gemini_module
 from app.api.routes import router as api_router
 import logging
+import time
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+_health_cache = {"time": 0, "storage": False, "firestore": False}
+CACHE_TTL = 30
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -45,13 +49,23 @@ def create_app() -> FastAPI:
 
     @app.get("/health")
     async def health_check():
-        storage_conn = check_storage_health()
+        global _health_cache
+        current_time = time.time()
+        
+        if current_time - _health_cache["time"] > CACHE_TTL:
+            _health_cache["storage"] = check_storage_health()
+            _health_cache["firestore"] = check_firestore_health()
+            _health_cache["time"] = current_time
+
+        storage_conn = _health_cache["storage"]
+        firestore_conn = _health_cache["firestore"]
+
         return {
             "status": "healthy",
             "environment": settings.ENVIRONMENT,
             "gemini_configured": gemini_module.gemini_configured,
             "firebase_configured": firebase_module.firebase_configured,
-            "firestore_connectivity": check_firestore_health(),
+            "firestore_connectivity": firestore_conn,
             "storage_connectivity": storage_conn,
             "active_storage_backend": "firebase" if storage_conn else "local"
         }

@@ -70,14 +70,14 @@ export function SuccessExperience() {
         transition={{ delay: 0.3, duration: 0.4 }}
         className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
       >
-        <Link to="/operations" className="w-full sm:w-auto">
+        <Link to={`/track/${caseId}`} className="w-full sm:w-auto">
           <Button size="lg" className="w-full sm:w-auto flex items-center gap-2 shadow-subtle hover:shadow-md transition-all hover:-translate-y-0.5">
-            <LayoutDashboard className="w-5 h-5" /> View Operations Dashboard
+            <LayoutDashboard className="w-5 h-5" /> Track Progress
           </Button>
         </Link>
-        <Link to="/signal" className="w-full sm:w-auto">
+        <Link to="/dashboard" className="w-full sm:w-auto">
           <Button variant="outline" size="lg" className="w-full sm:w-auto flex items-center gap-2 shadow-subtle hover:shadow-md transition-all hover:-translate-y-0.5 bg-background">
-            Submit Another Report <ArrowRight className="w-5 h-5" />
+            Community Dashboard <ArrowRight className="w-5 h-5" />
           </Button>
         </Link>
       </motion.div>

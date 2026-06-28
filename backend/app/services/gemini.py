@@ -120,3 +120,41 @@ async def analyze_signal(signal_id: str, image_bytes: bytes, title: str, descrip
         except Exception as e2:
             logger.error(f"Gemini Pass 2 Failed: {e2}. Raising error.")
             raise ValueError(f"Gemini AI Analysis Failed: {str(e2)}")
+
+async def copilot_action(signal_data: dict, action: str, context_notes: str = None) -> str:
+    """
+    Contextual AI actions for the Ops Workspace.
+    """
+    if not model:
+        raise ValueError("Gemini API key is missing. Cannot use Copilot.")
+
+    base_prompt = f"You are an AI Copilot assisting a Civic Operations Officer. Here is the case context:\n\n{json.dumps(signal_data, indent=2)}\n\n"
+    
+    if action == "summarize":
+        prompt = base_prompt + "Please provide a concise 2-3 sentence executive summary of this case, focusing on what needs to be done next."
+    elif action == "recommend_action":
+        prompt = base_prompt + "Please provide 3 specific, actionable steps the operations team should take to resolve this issue safely and effectively."
+    elif action == "generate_response":
+        prompt = base_prompt + "Please draft a polite, professional 2-3 sentence response to the citizen who reported this, explaining the current status and next steps."
+    elif action == "generate_officer_report":
+        prompt = base_prompt + "Please generate a formal Officer Report outlining the findings, current evidence, and recommended protocol for this civic issue."
+    elif action == "recommend_department":
+        prompt = base_prompt + "Based on the case details, which city department (e.g., Public Works, Sanitation, Traffic, Parks) is best suited to handle this? Briefly explain why."
+    elif action == "estimate_severity":
+        prompt = base_prompt + "Analyze the potential public impact and safety risks of this issue. Estimate the severity (Low, Medium, High, Critical) and justify the rating."
+    elif action == "generate_resolution_summary":
+        prompt = base_prompt + "Generate a detailed, final resolution summary that explains how the issue was resolved, the resources used, and the outcome, suitable for public record."
+    elif action == "generate_internal_notes":
+        prompt = base_prompt + "Draft concise internal operational notes for the shift handover regarding this case, highlighting only the critical technical facts."
+    else:
+        prompt = base_prompt + f"Please assist with the following request: {action}"
+
+    if context_notes:
+        prompt += f"\n\nOfficer Notes: {context_notes}"
+
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        logger.error(f"Copilot action failed: {e}")
+        raise ValueError(f"Copilot AI failed: {str(e)}")

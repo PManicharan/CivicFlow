@@ -90,18 +90,48 @@ async def get_all_signals_from_db() -> list[SignalMetadata]:
         logger.error(f"Error reading all from Firestore: {e}")
         raise e
 
-async def update_signal_status_in_db(signal_id: str, status: str) -> bool:
+async def update_signal_status_in_db(signal_id: str, payload) -> bool:
     db = get_db()
+    
+    update_data = {
+        'status': payload.status
+    }
+    
+    if payload.resolution_image_url:
+        update_data['resolution_image_url'] = payload.resolution_image_url
+        
+    if payload.officer_id:
+        update_data['assigned_to'] = payload.officer_id
+        
+    if payload.note:
+        update_data['officer_notes'] = payload.note
+
+    timeline_event = {
+        'status': payload.status,
+        'timestamp': datetime.utcnow().isoformat(),
+        'note': payload.note,
+        'officer_id': payload.officer_id
+    }
+    
     if not db:
         if signal_id in LOCAL_DB:
-            LOCAL_DB[signal_id].status = status
+            signal = LOCAL_DB[signal_id]
+            signal.status = payload.status
+            if payload.resolution_image_url:
+                signal.resolution_image_url = payload.resolution_image_url
+            if payload.officer_id:
+                signal.assigned_to = payload.officer_id
+            if payload.note:
+                signal.officer_notes = payload.note
+            signal.timeline.append(timeline_event)
             return True
         raise Exception("Signal not found")
         
     try:
         doc_ref = db.collection('signals').document(signal_id)
         if doc_ref.get().exists:
-            doc_ref.update({'status': status})
+            update_data['timeline'] = firestore.ArrayUnion([timeline_event])
+            doc_ref.update(update_data)
             return True
         else:
             raise Exception("Signal not found")

@@ -18,29 +18,48 @@ export function Hero() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
 
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="space-y-8 max-w-4xl px-4"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="space-y-8 max-w-4xl px-4 relative z-10"
       >
-        <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-foreground leading-[1.1]">
-          From Community Signals to <span className="text-muted-foreground block mt-2">Smarter Decisions.</span>
-        </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-light">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+        >
+          <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-foreground leading-[1.1]">
+            From Community Signals to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60 block mt-2">Smarter Decisions.</span>
+          </h1>
+        </motion.div>
+        
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.4 }}
+          className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-light"
+        >
           CivicFlow transforms local issues into structured AI intelligence for faster prioritization and resolution.
-        </p>
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/signal">
-            <Button size="lg" className="w-full sm:w-auto shadow-subtle hover:-translate-y-0.5 transition-transform">
-              Start AI Investigation
+        </motion.p>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <Link to="/signal" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full shadow-lg hover:shadow-primary/25 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+              <span className="relative z-10">Start AI Investigation</span>
+              <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
             </Button>
           </Link>
-          <a href="#decision-engine">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto hover:bg-muted/50 transition-colors">
+          <a href="#decision-engine" className="w-full sm:w-auto">
+            <Button variant="outline" size="lg" className="w-full hover:bg-muted/50 transition-colors">
               Explore the Engine
             </Button>
           </a>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Floating Animated Preview */}

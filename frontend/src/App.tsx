@@ -19,6 +19,14 @@ const Privacy = lazy(() => import('./pages/Privacy').then(m => ({ default: m.Pri
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 const SuccessExperience = lazy(() => import('./pages/SuccessExperience').then(m => ({ default: m.SuccessExperience })));
 
+// New Version 2.0 Pages
+const CommunityDashboard = lazy(() => import('./pages/CommunityDashboard').then(m => ({ default: m.CommunityDashboard })));
+const PublicTracking = lazy(() => import('./pages/PublicTracking').then(m => ({ default: m.PublicTracking })));
+const WorkspaceLogin = lazy(() => import('./pages/WorkspaceLogin').then(m => ({ default: m.WorkspaceLogin })));
+
+import { WorkspaceLayout } from './components/layout/WorkspaceLayout';
+import { AuthProvider } from './contexts/AuthContext';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -36,7 +44,14 @@ const router = createBrowserRouter([
           </Suspense>
         ) 
       },
-      { path: 'dashboard', element: <Navigate to="/operations" replace /> },
+      { 
+        path: 'dashboard', 
+        element: (
+          <Suspense fallback={<Loading fullScreen />}>
+            <CommunityDashboard />
+          </Suspense>
+        ) 
+      },
       { 
         path: 'signal', 
         element: (
@@ -54,18 +69,10 @@ const router = createBrowserRouter([
         ) 
       },
       { 
-        path: 'investigation', 
+        path: 'track/:id', 
         element: (
           <Suspense fallback={<Loading fullScreen />}>
-            <Investigation />
-          </Suspense>
-        ) 
-      },
-      { 
-        path: 'operations', 
-        element: (
-          <Suspense fallback={<Loading fullScreen />}>
-            <OperationsWorkspace />
+            <PublicTracking />
           </Suspense>
         ) 
       },
@@ -90,14 +97,6 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loading fullScreen />}>
             <Security />
-          </Suspense>
-        ) 
-      },
-      { 
-        path: 'settings', 
-        element: (
-          <Suspense fallback={<Loading fullScreen />}>
-            <Settings />
           </Suspense>
         ) 
       },
@@ -135,10 +134,73 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: '/workspace/login',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<Loading fullScreen />}>
+          <WorkspaceLogin />
+        </Suspense>
+      </ErrorBoundary>
+    )
+  },
+  {
+    path: '/workspace',
+    element: (
+      <ErrorBoundary>
+        <WorkspaceLayout />
+      </ErrorBoundary>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/workspace/operations" replace />
+      },
+      {
+        path: 'operations',
+        element: (
+          <Suspense fallback={<Loading fullScreen />}>
+            <OperationsWorkspace />
+          </Suspense>
+        )
+      },
+      {
+        path: 'investigation/:id',
+        element: (
+          <Suspense fallback={<Loading fullScreen />}>
+            <Investigation />
+          </Suspense>
+        )
+      },
+      {
+        path: 'settings',
+        element: (
+          <Suspense fallback={<Loading fullScreen />}>
+            <Settings />
+          </Suspense>
+        )
+      },
+      { 
+        path: '*', 
+        element: (
+          <Suspense fallback={<Loading fullScreen />}>
+            <NotFound />
+          </Suspense>
+        ) 
+      },
+    ]
+  }
 ]);
 
+import { Toaster } from 'sonner';
+
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <Toaster position="top-right" richColors />
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default App;

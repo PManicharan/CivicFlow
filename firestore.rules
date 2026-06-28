@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /signals/{signalId} {
+      // Anyone can read a signal to track it
+      allow read: if true;
+      
+      // Anyone can create a signal
+      allow create: if true;
+      
+      // Only authenticated ops officers can update a signal
+      allow update, delete: if request.auth != null;
+    }
+  }
+}

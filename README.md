@@ -1,4 +1,4 @@
-# CivicFlow
+# CivicFlow v2.1
 
 > **Intelligent Community Safety Intelligence Platform Powered by AI**
 
@@ -60,7 +60,7 @@ Every day, communities face safety challenges that require rapid, accurate infor
 
 Current civic reporting platforms are fundamentally limited:
 
-| Problem | Traditional Systems | CivicFlow |
+| Problem | Traditional Systems | CivicFlow v2.1 |
 |---------|-------------------|-----------|
 | **Analysis Speed** | 10-30 minutes manual review | Real-time AI assessment |
 | **Data Integration** | Text only | Photos, videos, descriptions (multimodal) |
@@ -68,6 +68,15 @@ Current civic reporting platforms are fundamentally limited:
 | **Verification** | Manual cross-checking | Automated cross-reference & validation |
 | **Scale** | Requires human scaling | Scales instantly with demand |
 | **Context Awareness** | Limited context | Semantic understanding of situations |
+
+---
+
+## 🚀 Version 2.1 Updates
+CivicFlow v2.1 introduces a complete separation between public and secure environments, transforming it into a production-grade AI civic platform:
+- **Public Citizen Portal**: Read-only tracking, interactive heatmaps, and community dashboards.
+- **Secure Operations Workspace**: Firebase Auth protected command center for city officials.
+- **AI Copilot**: 5+ new Gemini action prompts for drafting citizen responses, internal notes, and more.
+- **Enterprise Security**: Complete Firestore security rules and authenticated routes.
 
 ---
 
@@ -117,7 +126,7 @@ Current civic reporting platforms are fundamentally limited:
 ### 📊 Real-Time Operations
 - **Live Dashboard**: Unified operations center for all active signals
 - **Automated Routing**: Intelligent dispatch to appropriate departments
-- **Performance Metrics**: Track response times and outcome quality
+- **AI Copilot Workspace**: Chat with Gemini to generate responses and internal notes
 - **Integration Ready**: APIs for third-party systems and workflows
 
 ---
