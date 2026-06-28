@@ -29,7 +29,7 @@ export function Settings() {
         const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/health`);
         const data = await res.json();
         setHealth(data);
-      } catch (err) {
+      } catch {
         setHealth({ status: 'offline' });
       } finally {
         setIsHealthLoading(false);

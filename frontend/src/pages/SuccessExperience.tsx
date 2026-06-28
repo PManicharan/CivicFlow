@@ -9,7 +9,7 @@ export function SuccessExperience() {
   const state = location.state as { report: any } | null;
 
   if (!state || !state.report) {
-    return <Navigate to="/operations" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const { report } = state;

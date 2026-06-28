@@ -99,7 +99,7 @@ export function Investigation() {
       if (!response.ok) throw new Error("Copilot failed");
       const data = await response.json();
       setCopilotResponse(data.response);
-    } catch (err: any) {
+    } catch {
       toast.error("AI Copilot is currently unavailable.");
     } finally {
       setCopilotLoading(false);

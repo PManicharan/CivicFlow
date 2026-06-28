@@ -27,7 +27,7 @@ export function WorkspaceLogin() {
       await signInWithEmailAndPassword(auth, email, password);
       const from = (location.state as any)?.from?.pathname || '/workspace/operations';
       navigate(from, { replace: true });
-    } catch (err: any) {
+      } catch {
       setError('Invalid email or password. Please contact your administrator if you cannot access your account.');
     } finally {
       setLoading(false);
