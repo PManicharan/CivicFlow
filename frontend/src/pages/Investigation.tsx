@@ -257,9 +257,9 @@ export function Investigation() {
                 <CheckCircle2 className="w-4 h-4" /> Before & After Evidence
               </div>
               <div className="relative w-full h-64 md:h-80 select-none group">
-                <img src={imagePreview} alt="Before" className="absolute inset-0 w-full h-full object-cover" />
+                <img src={imagePreview} loading="lazy" decoding="async" alt="Before" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 w-1/2 overflow-hidden border-r-2 border-primary group-hover:border-primary/80 transition-colors duration-200 shadow-[2px_0_10px_rgba(0,0,0,0.5)]">
-                  <img src={signal.resolution_image_url} alt="After" className="absolute inset-0 w-[200vw] max-w-none h-full object-cover" />
+                  <img src={signal.resolution_image_url} loading="lazy" decoding="async" alt="After" className="absolute inset-0 w-[200vw] max-w-none h-full object-cover" />
                 </div>
                 <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-semibold shadow-sm z-10">After</div>
                 <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-semibold shadow-sm z-10">Before</div>
@@ -329,7 +329,7 @@ export function Investigation() {
                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Original Evidence</h3>
                <div className="rounded-xl overflow-hidden border border-border shadow-subtle bg-muted h-64">
                  {imagePreview && (
-                   <img src={imagePreview} alt="Evidence" className="w-full h-full object-cover" />
+                   <img src={imagePreview} loading="lazy" decoding="async" alt="Evidence" className="w-full h-full object-cover" />
                  )}
                </div>
             </CardContent>

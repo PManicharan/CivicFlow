@@ -15,7 +15,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
       {...props}
     >
       {src ? (
-        <img className="aspect-square h-full w-full object-cover" src={src} alt="Avatar" />
+        <img className="aspect-square h-full w-full object-cover" loading="lazy" decoding="async" src={src} alt="Avatar" />
       ) : (
         <span className="flex h-full w-full items-center justify-center text-sm font-medium text-muted-foreground uppercase">
           {fallback}

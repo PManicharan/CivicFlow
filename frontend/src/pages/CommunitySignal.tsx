@@ -303,7 +303,7 @@ export function CommunitySignal() {
                   </div>
                   
                   <div className="relative w-full h-56 rounded-xl overflow-hidden border border-border">
-                    <img src={image} loading="lazy" alt="Evidence Preview" className="w-full h-full object-cover" />
+                    <img src={image} loading="lazy" decoding="async" alt="Evidence Preview" className="w-full h-full object-cover" />
                   </div>
                   
                   <div className="flex gap-2">
