@@ -6,8 +6,9 @@ export function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
-      <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-8">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[80px] -z-10" />
+      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-8 shadow-inner border border-primary/20">
         <MapPinOff className="w-10 h-10" />
       </div>
       

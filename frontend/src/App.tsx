@@ -23,6 +23,7 @@ const SuccessExperience = lazy(() => import('./pages/SuccessExperience').then(m 
 const CommunityDashboard = lazy(() => import('./pages/CommunityDashboard').then(m => ({ default: m.CommunityDashboard })));
 const PublicTracking = lazy(() => import('./pages/PublicTracking').then(m => ({ default: m.PublicTracking })));
 const WorkspaceLogin = lazy(() => import('./pages/WorkspaceLogin').then(m => ({ default: m.WorkspaceLogin })));
+const WorkspaceRegister = lazy(() => import('./pages/WorkspaceRegister').then(m => ({ default: m.WorkspaceRegister })));
 
 import { WorkspaceLayout } from './components/layout/WorkspaceLayout';
 import { AuthProvider } from './contexts/AuthContext';
@@ -140,6 +141,16 @@ const router = createBrowserRouter([
       <ErrorBoundary>
         <Suspense fallback={<Loading fullScreen />}>
           <WorkspaceLogin />
+        </Suspense>
+      </ErrorBoundary>
+    )
+  },
+  {
+    path: '/workspace/register',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<Loading fullScreen />}>
+          <WorkspaceRegister />
         </Suspense>
       </ErrorBoundary>
     )

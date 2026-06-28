@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { ServerCrash, SearchX, Globe } from 'lucide-react';
-import { EmptyState } from '../components/ui/EmptyState';
 import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
@@ -167,41 +166,62 @@ export function CommunityDashboard() {
         <div className="lg:col-span-3">
           <Card className="shadow-subtle border-none">
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b border-border">
-                    <tr>
-                      <th className="px-6 py-4 font-medium tracking-wider">Issue Type</th>
-                      <th className="px-6 py-4 font-medium tracking-wider">Status</th>
-                      <th className="px-6 py-4 font-medium tracking-wider">Location</th>
-                      <th className="px-6 py-4 font-medium tracking-wider">Priority</th>
-                      <th className="px-6 py-4 font-medium tracking-wider">Reported</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <AnimatePresence>
-                      {loading ? (
-                        Array.from({ length: 5 }).map((_, i) => (
-                          <tr key={`skeleton-${i}`} className="border-b border-border/50">
-                            <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
-                            <td className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-full" /></td>
-                            <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
-                            <td className="px-6 py-4"><Skeleton className="h-6 w-16 rounded-full" /></td>
-                            <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
-                          </tr>
-                        ))
-                      ) : signals.length === 0 ? (
-                        <tr>
-                          <td colSpan={5} className="p-0 border-b-0">
-                            <EmptyState 
-                              title="No issues found"
-                              description="The community is currently clear of reported civic issues."
-                              icon={<SearchX className="w-12 h-12 text-muted-foreground/50" />}
-                            />
-                          </td>
+              {loading ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b border-border">
+                      <tr>
+                        <th className="px-6 py-4 font-medium tracking-wider">Issue Type</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Status</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Location</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Priority</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Reported</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <tr key={`skeleton-${i}`} className="border-b border-border/50">
+                          <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
+                          <td className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-full" /></td>
+                          <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
+                          <td className="px-6 py-4"><Skeleton className="h-6 w-16 rounded-full" /></td>
+                          <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
                         </tr>
-                      ) : (
-                        signals
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : signals.length === 0 ? (
+                <div className="p-12 flex flex-col items-center justify-center text-center border border-dashed border-border rounded-lg bg-muted/5">
+                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                    <SearchX className="w-10 h-10 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2">No Community Reports Yet</h3>
+                  <p className="text-muted-foreground max-w-md mb-8">
+                    Your community is currently clear of reported issues. Be the first to report an infrastructure or safety concern.
+                  </p>
+                  <button 
+                    onClick={() => navigate('/signal')}
+                    className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-lg"
+                  >
+                    Submit a Signal
+                  </button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-muted-foreground uppercase bg-muted/30 border-b border-border">
+                      <tr>
+                        <th className="px-6 py-4 font-medium tracking-wider">Issue Type</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Status</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Location</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Priority</th>
+                        <th className="px-6 py-4 font-medium tracking-wider">Reported</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <AnimatePresence>
+                        {signals
                           .filter(s => statusFilter === 'All' || s.status === statusFilter)
                           .filter(s => {
                             if (!searchTerm) return true;
@@ -242,12 +262,12 @@ export function CommunityDashboard() {
                         {formatDate(signal.created_at)}
                       </td>
                     </motion.tr>
-                  ))
-                )}
+                  ))}
                 </AnimatePresence>
               </tbody>
             </table>
           </div>
+          )}
         </CardContent>
       </Card>
         </div>

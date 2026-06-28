@@ -4,12 +4,13 @@ import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Textarea } from '../components/ui/Textarea';
-import { CheckCircle2, Loader2, AlertTriangle, MapPin, Building2, Bot, ImagePlus } from 'lucide-react';
+import { CheckCircle2, Loader2, AlertTriangle, MapPin, Building2, Bot, ImagePlus, X, ZoomIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
+import { Skeleton } from '../components/ui/Skeleton';
 
 export function Investigation() {
   const { id } = useParams();
@@ -106,10 +107,36 @@ export function Investigation() {
     }
   };
 
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
   if (loading) {
     return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="container mx-auto px-4 py-8 max-w-7xl mt-16 space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 pb-6 border-b border-border">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-3 space-y-4">
+            <Skeleton className="h-6 w-32 mb-6" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+          <div className="lg:col-span-6 space-y-6">
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+          <div className="lg:col-span-3 space-y-6">
+            <Skeleton className="h-80 w-full" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -327,13 +354,48 @@ export function Investigation() {
           <Card>
             <CardContent className="p-6">
                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Original Evidence</h3>
-               <div className="rounded-xl overflow-hidden border border-border shadow-subtle bg-muted h-64">
+               <div 
+                 className="rounded-xl overflow-hidden border border-border shadow-subtle bg-muted h-64 relative group cursor-pointer"
+                 onClick={() => setIsImageModalOpen(true)}
+               >
                  {imagePreview && (
-                   <img src={imagePreview} loading="lazy" decoding="async" alt="Evidence" className="w-full h-full object-cover" />
+                   <>
+                     <img src={imagePreview} loading="lazy" decoding="async" alt="Evidence" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <ZoomIn className="w-8 h-8 text-white" />
+                     </div>
+                   </>
                  )}
                </div>
             </CardContent>
           </Card>
+
+          <AnimatePresence>
+            {isImageModalOpen && imagePreview && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 backdrop-blur-sm p-4"
+                onClick={() => setIsImageModalOpen(false)}
+              >
+                <div className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
+                  <button 
+                    className="absolute -top-12 right-0 p-2 bg-muted/50 hover:bg-muted text-foreground rounded-full transition-colors"
+                    onClick={() => setIsImageModalOpen(false)}
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                  <img 
+                    src={imagePreview} 
+                    alt="Evidence Fullscreen" 
+                    className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border border-border/50"
+                    onClick={(e) => e.stopPropagation()} 
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Right Col: AI Copilot */}
