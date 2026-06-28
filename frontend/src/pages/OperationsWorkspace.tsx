@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -7,8 +7,7 @@ import { ServerCrash, LayoutDashboard, SearchX } from 'lucide-react';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { fetchWithCache, deduplicateSignals } from '../lib/apiCache';
 
 export function OperationsWorkspace() {
   const navigate = useNavigate();
@@ -17,28 +16,40 @@ export function OperationsWorkspace() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const isMounted = useRef(true);
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
+  const fetchSignals = useCallback(async (isInitial = false) => {
     try {
-      const q = query(collection(db, 'signals'), orderBy('created_at', 'desc'));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setSignals(data);
-        setLoading(false);
-      }, (err) => {
-        console.error("Firestore Error:", err);
-        setError("Failed to listen for realtime updates. Check permissions or network.");
-        setLoading(false);
+      const data = await fetchWithCache<any[]>('/api/signals', (freshData) => {
+        if (isMounted.current) {
+          setSignals(deduplicateSignals(freshData));
+        }
       });
-
-      return () => unsubscribe();
+      if (isMounted.current) {
+        setSignals(deduplicateSignals(data));
+        setError(null);
+      }
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
-      setLoading(false);
+      if (isMounted.current) {
+        console.error("API Fetch Error:", err);
+        setError(err.message || "Failed to load cases. Check network.");
+      }
+    } finally {
+      if (isMounted.current && isInitial) {
+        setLoading(false);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    isMounted.current = true;
+    fetchSignals(true);
+    const intervalId = window.setInterval(() => fetchSignals(false), 15000);
+    return () => {
+      isMounted.current = false;
+      window.clearInterval(intervalId);
+    };
+  }, [fetchSignals]);
 
   const handleRowClick = (signal: any) => {
     navigate(`/workspace/investigation/${signal.id}`, {

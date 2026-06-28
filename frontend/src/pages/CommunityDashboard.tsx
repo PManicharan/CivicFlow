@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -8,6 +8,7 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { SafeImage } from '../components/ui/SafeImage';
+import { fetchWithCache, deduplicateSignals } from '../lib/apiCache';
 
 export function CommunityDashboard() {
   const navigate = useNavigate();
@@ -18,52 +19,40 @@ export function CommunityDashboard() {
   const [statusFilter, setStatusFilter] = useState('All');
   
   const [selectedSignal, setSelectedSignal] = useState<any>(null);
+  const isMounted = useRef(true);
 
-  useEffect(() => {
-    let intervalId: number;
-    
-    const fetchSignals = async () => {
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/api/signals`);
-        if (!response.ok) throw new Error('Failed to fetch signals');
-        
-        const data = await response.json();
-        
-        // Sort newest first to ensure we keep the latest when deduplicating
-        data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        
-        // Deduplicate by signal ID and content signature
-        const seenId = new Set<string>();
-        const seenContent = new Set<string>();
-        
-        const unique = data.filter((s: any) => {
-          if (seenId.has(s.id)) return false;
-          
-          const signature = `${s.location}|${s.description}|${s.created_at}`;
-          if (seenContent.has(signature)) return false;
-          
-          seenId.add(s.id);
-          seenContent.add(signature);
-          return true;
-        });
-        
-        setSignals(unique);
+  const fetchSignals = useCallback(async (isInitial = false) => {
+    try {
+      const data = await fetchWithCache<any[]>('/api/signals', (freshData) => {
+        if (isMounted.current) {
+          setSignals(deduplicateSignals(freshData));
+        }
+      });
+      if (isMounted.current) {
+        setSignals(deduplicateSignals(data));
         setError(null);
-      } catch (err: any) {
+      }
+    } catch (err: any) {
+      if (isMounted.current) {
         console.error("API Fetch Error:", err);
         setError(err.message || "Failed to load reports. Check network.");
-      } finally {
+      }
+    } finally {
+      if (isMounted.current && isInitial) {
         setLoading(false);
       }
-    };
-
-    setLoading(true);
-    fetchSignals();
-    intervalId = window.setInterval(fetchSignals, 5000);
-
-    return () => window.clearInterval(intervalId);
+    }
   }, []);
+
+  useEffect(() => {
+    isMounted.current = true;
+    fetchSignals(true);
+    const intervalId = window.setInterval(() => fetchSignals(false), 15000);
+    return () => {
+      isMounted.current = false;
+      window.clearInterval(intervalId);
+    };
+  }, [fetchSignals]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority?.toLowerCase()) {

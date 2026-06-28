@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { CheckCircle2, AlertTriangle, MapPin, Loader2, ArrowLeft } from 'lucide-react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { CheckCircle2, AlertTriangle, MapPin, ArrowLeft } from 'lucide-react';
 import { SafeImage } from '../components/ui/SafeImage';
+import { Skeleton } from '../components/ui/Skeleton';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export function PublicTracking() {
   const { id } = useParams();
@@ -15,32 +16,58 @@ export function PublicTracking() {
   const [signal, setSignal] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const isMounted = useRef(true);
+
+  const fetchSignal = useCallback(async (isInitial = false) => {
+    if (!id) return;
+    try {
+      const response = await fetch(`${API_URL}/api/signals/${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          if (isMounted.current) setError(true);
+          return;
+        }
+        throw new Error(`Server error: ${response.status}`);
+      }
+      const data = await response.json();
+      if (isMounted.current) {
+        setSignal(data);
+        setError(false);
+      }
+    } catch (err) {
+      console.error("Failed to fetch signal:", err);
+      if (isMounted.current) setError(true);
+    } finally {
+      if (isMounted.current && isInitial) setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-    
-    setLoading(true);
-    const docRef = doc(db, 'signals', id);
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setSignal({ id: docSnap.id, ...docSnap.data() });
-      } else {
-        setError(true);
-      }
-      setLoading(false);
-    }, (err) => {
-      console.error(err);
-      setError(true);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [id]);
+    isMounted.current = true;
+    fetchSignal(true);
+    const intervalId = window.setInterval(() => fetchSignal(false), 15000);
+    return () => {
+      isMounted.current = false;
+      window.clearInterval(intervalId);
+    };
+  }, [fetchSignal]);
 
   if (loading) {
     return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="container mx-auto px-4 py-8 max-w-5xl mt-16">
+        <Skeleton className="h-8 w-32 mb-6" />
+        <div className="space-y-4 mb-8 pb-6 border-b border-border">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-5 w-48" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Skeleton className="h-64 rounded-xl" />
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-6 w-1/2" />
+          </div>
+        </div>
       </div>
     );
   }

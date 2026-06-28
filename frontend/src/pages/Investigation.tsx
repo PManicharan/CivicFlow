@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -6,11 +6,12 @@ import { Button } from '../components/ui/Button';
 import { Textarea } from '../components/ui/Textarea';
 import { CheckCircle2, Loader2, AlertTriangle, MapPin, Building2, Bot, ImagePlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 import { SafeImage } from '../components/ui/SafeImage';
+import { Skeleton } from '../components/ui/Skeleton';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 export function Investigation() {
   const { id } = useParams();
@@ -34,26 +35,41 @@ export function Investigation() {
   const [resolutionImageUrl, setResolutionImageUrl] = useState('');
   const [showResolutionForm, setShowResolutionForm] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
-    
-    setLoading(true);
-    const docRef = doc(db, 'signals', id);
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setSignal({ id: docSnap.id, ...docSnap.data() });
-      } else {
-        setError(true);
-      }
-      setLoading(false);
-    }, (err) => {
-      console.error(err);
-      setError(true);
-      setLoading(false);
-    });
+  const isMounted = useRef(true);
 
-    return () => unsubscribe();
+  const fetchSignal = useCallback(async (isInitial = false) => {
+    if (!id) return;
+    try {
+      const response = await fetch(`${API_URL}/api/signals/${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          if (isMounted.current) setError(true);
+          return;
+        }
+        throw new Error(`Server error: ${response.status}`);
+      }
+      const data = await response.json();
+      if (isMounted.current) {
+        setSignal(data);
+        setError(false);
+      }
+    } catch (err) {
+      console.error("Failed to fetch signal:", err);
+      if (isMounted.current) setError(true);
+    } finally {
+      if (isMounted.current && isInitial) setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    fetchSignal(true);
+    const intervalId = window.setInterval(() => fetchSignal(false), 15000);
+    return () => {
+      isMounted.current = false;
+      window.clearInterval(intervalId);
+    };
+  }, [fetchSignal]);
 
   const handleUpdateStatus = async (newStatus: string) => {
     if (!signal?.id) return;
@@ -67,7 +83,7 @@ export function Investigation() {
     };
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/signals/${signal.id}/status`, {
+      const response = await fetch(`${API_URL}/api/signals/${signal.id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -79,6 +95,8 @@ export function Investigation() {
       setShowResolutionForm(false);
       setOfficerNotes('');
       setResolutionImageUrl('');
+      // Re-fetch to get updated data
+      fetchSignal(false);
     } catch (err: any) {
       toast.error(err.message || "Failed to update status.");
     } finally {
@@ -92,7 +110,7 @@ export function Investigation() {
     setCopilotLoading(true);
     setCopilotResponse(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/signals/${signal.id}/copilot`, {
+      const response = await fetch(`${API_URL}/api/signals/${signal.id}/copilot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, context: officerNotes })
@@ -109,8 +127,24 @@ export function Investigation() {
 
   if (loading) {
     return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <Skeleton className="h-8 w-32 mb-6" />
+        <div className="space-y-4 mb-8 pb-6 border-b border-border">
+          <Skeleton className="h-10 w-80" />
+          <Skeleton className="h-5 w-48" />
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="space-y-4">
+            <Skeleton className="h-64 rounded-xl" />
+            <Skeleton className="h-32 rounded-xl" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-20 rounded-xl" />
+            <Skeleton className="h-20 rounded-xl" />
+            <Skeleton className="h-20 rounded-xl" />
+            <Skeleton className="h-20 rounded-xl" />
+          </div>
+        </div>
       </div>
     );
   }

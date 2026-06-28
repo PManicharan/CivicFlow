@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 import { RootLayout } from './components/layout/RootLayout';
-import { Loading } from './components/ui/Loading';
+import { PageSkeleton } from './components/ui/PageSkeleton';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Lazy load all pages for better performance
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
       { 
         index: true, 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Home />
           </Suspense>
         ) 
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
       { 
         path: 'dashboard', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <CommunityDashboard />
           </Suspense>
         ) 
@@ -55,7 +55,7 @@ const router = createBrowserRouter([
       { 
         path: 'signal', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <CommunitySignal />
           </Suspense>
         ) 
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
       { 
         path: 'success', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <SuccessExperience />
           </Suspense>
         ) 
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
       { 
         path: 'track/:id', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <PublicTracking />
           </Suspense>
         ) 
@@ -79,7 +79,7 @@ const router = createBrowserRouter([
       { 
         path: 'about', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <About />
           </Suspense>
         ) 
@@ -87,7 +87,7 @@ const router = createBrowserRouter([
       { 
         path: 'support', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Support />
           </Suspense>
         ) 
@@ -95,7 +95,7 @@ const router = createBrowserRouter([
       { 
         path: 'security', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Security />
           </Suspense>
         ) 
@@ -103,7 +103,7 @@ const router = createBrowserRouter([
       { 
         path: 'how-it-works', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <HowItWorksPage />
           </Suspense>
         ) 
@@ -111,7 +111,7 @@ const router = createBrowserRouter([
       { 
         path: 'documentation', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Documentation />
           </Suspense>
         ) 
@@ -119,7 +119,7 @@ const router = createBrowserRouter([
       { 
         path: 'privacy', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Privacy />
           </Suspense>
         ) 
@@ -127,7 +127,7 @@ const router = createBrowserRouter([
       { 
         path: 'settings', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Settings />
           </Suspense>
         ) 
@@ -135,7 +135,7 @@ const router = createBrowserRouter([
       { 
         path: '*', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <NotFound />
           </Suspense>
         ) 
@@ -146,7 +146,7 @@ const router = createBrowserRouter([
     path: '/workspace/login',
     element: (
       <ErrorBoundary>
-        <Suspense fallback={<Loading fullScreen />}>
+        <Suspense fallback={<PageSkeleton />}>
           <WorkspaceLogin />
         </Suspense>
       </ErrorBoundary>
@@ -167,7 +167,7 @@ const router = createBrowserRouter([
       {
         path: 'operations',
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <OperationsWorkspace />
           </Suspense>
         )
@@ -175,7 +175,7 @@ const router = createBrowserRouter([
       {
         path: 'investigation/:id',
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <Investigation />
           </Suspense>
         )
@@ -184,7 +184,7 @@ const router = createBrowserRouter([
       { 
         path: '*', 
         element: (
-          <Suspense fallback={<Loading fullScreen />}>
+          <Suspense fallback={<PageSkeleton />}>
             <NotFound />
           </Suspense>
         ) 
