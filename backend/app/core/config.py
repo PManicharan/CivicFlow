@@ -14,7 +14,11 @@ class Settings(BaseSettings):
     FIREBASE_CREDENTIALS_PATH: str = "./service-account.json"
     
     # CORS
-    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    BACKEND_CORS_ORIGINS: list[str] = [
+        "http://localhost:5173",
+        "https://civicflow.vercel.app"
+    ]
+    BACKEND_CORS_ORIGIN_REGEX: Optional[str] = r"https://.*\.vercel\.app"
 
     class Config:
         env_file = ".env"
