@@ -13,7 +13,7 @@ export function SuccessExperience() {
   }
 
   const { report } = state;
-  const trustScore = report.trust_score || 85;
+  const trustScore = report.trustScore ?? report.trust_score ?? 85;
   const caseId = report.caseId || report.id || report.case_id || 'CF-NEW-CASE';
 
   return (

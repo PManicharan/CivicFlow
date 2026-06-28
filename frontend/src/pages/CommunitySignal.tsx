@@ -180,10 +180,15 @@ export function CommunitySignal() {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        if (response.status === 413) throw new Error("Image file is too large. Max size is 10MB.");
-        if (response.status === 415) throw new Error("Unsupported file format. Use JPG, PNG, or WEBP.");
-        if (response.status === 500) throw new Error("Backend is unavailable or failed to process the request.");
-        throw new Error("Invalid response from server.");
+        let serverMessage = '';
+        try {
+          const errBody = await response.json();
+          serverMessage = errBody.detail || '';
+        } catch { /* response wasn't JSON */ }
+
+        if (response.status === 413) throw new Error(serverMessage || "Image file is too large. Max size is 10MB.");
+        if (response.status === 415) throw new Error(serverMessage || "Unsupported file format. Use JPG, PNG, or WEBP.");
+        throw new Error(serverMessage || `Server error (${response.status}). Please try again.`);
       }
 
       const report = await response.json();

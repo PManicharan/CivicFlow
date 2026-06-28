@@ -8,6 +8,31 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+/**
+ * Resolves image URLs that the backend may return as relative paths or
+ * localhost URLs (from the local-storage fallback) into absolute URLs
+ * reachable from the browser in production.
+ */
+function resolveImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  // Already an absolute http(s) URL pointing somewhere other than localhost
+  if (/^https?:\/\//.test(url) && !url.includes('localhost')) return url;
+  // Relative path like /uploads/CF-XXXX.jpg
+  if (url.startsWith('/')) return `${API_URL}${url}`;
+  // Localhost fallback URL – swap origin to the real API host
+  if (url.includes('localhost')) {
+    try {
+      const parsed = new URL(url);
+      return `${API_URL}${parsed.pathname}`;
+    } catch {
+      return url;
+    }
+  }
+  return url;
+}
+
 export function CommunityDashboard() {
   const navigate = useNavigate();
   const [signals, setSignals] = useState<any[]>([]);
@@ -28,7 +53,14 @@ export function CommunityDashboard() {
         if (!response.ok) throw new Error('Failed to fetch signals');
         
         const data = await response.json();
-        setSignals(data);
+        // Deduplicate by signal ID to guard against backend-side duplicates
+        const seen = new Set<string>();
+        const unique = data.filter((s: any) => {
+          if (seen.has(s.id)) return false;
+          seen.add(s.id);
+          return true;
+        });
+        setSignals(unique);
         setError(null);
       } catch (err: any) {
         console.error("API Fetch Error:", err);
@@ -175,8 +207,8 @@ export function CommunityDashboard() {
                   {/* Left Column: Image and Details */}
                   <div className="space-y-6">
                     <div className="rounded-xl overflow-hidden border border-border bg-muted aspect-video relative">
-                      {selectedSignal.image_url ? (
-                        <img src={selectedSignal.image_url} alt="Evidence" className="w-full h-full object-cover" loading="lazy" />
+                      {resolveImageUrl(selectedSignal.image_url) ? (
+                        <img src={resolveImageUrl(selectedSignal.image_url)!} alt="Evidence" className="w-full h-full object-cover" loading="lazy" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground flex-col gap-2">
                           <ImageIcon className="w-8 h-8 opacity-50" />
@@ -409,9 +441,9 @@ export function CommunityDashboard() {
               >
                 <Card className="shadow-subtle h-full flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
                   <div className="relative h-48 overflow-hidden bg-muted">
-                    {signal.image_url ? (
+                    {resolveImageUrl(signal.image_url) ? (
                       <img 
-                        src={signal.image_url} 
+                        src={resolveImageUrl(signal.image_url)!} 
                         alt="Evidence" 
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
