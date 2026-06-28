@@ -125,6 +125,14 @@ const router = createBrowserRouter([
         ) 
       },
       { 
+        path: 'settings', 
+        element: (
+          <Suspense fallback={<Loading fullScreen />}>
+            <Settings />
+          </Suspense>
+        ) 
+      },
+      { 
         path: '*', 
         element: (
           <Suspense fallback={<Loading fullScreen />}>
@@ -172,14 +180,7 @@ const router = createBrowserRouter([
           </Suspense>
         )
       },
-      {
-        path: 'settings',
-        element: (
-          <Suspense fallback={<Loading fullScreen />}>
-            <Settings />
-          </Suspense>
-        )
-      },
+
       { 
         path: '*', 
         element: (

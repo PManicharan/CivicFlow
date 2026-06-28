@@ -66,7 +66,7 @@ export function WorkspaceLayout() {
     { to: '/workspace/analytics', icon: ChartNoAxesCombined, label: 'Analytics' },
     { type: 'divider' },
     { type: 'heading', label: 'System' },
-    { to: '/workspace/settings', icon: Settings, label: 'Settings' },
+    { to: '/settings', icon: Settings, label: 'Settings' },
     { type: 'divider' },
     { type: 'action', icon: LogOut, label: 'Sign Out', onClick: handleLogout }
   ];

@@ -7,7 +7,7 @@ import { ThemeProvider } from './components/ThemeProvider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="system" storageKey="civicflow-ui-theme">
+    <ThemeProvider defaultTheme="light" storageKey="civicflow-ui-theme">
       <App />
       <Toaster position="top-right" theme="system" richColors closeButton />
     </ThemeProvider>
