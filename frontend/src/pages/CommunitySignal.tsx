@@ -187,6 +187,16 @@ export function CommunitySignal() {
       }
 
       const report = await response.json();
+      
+      // Ensure the frontend routing gets the correct document ID and trust score 
+      // from the AI InvestigationReport schema
+      if (report.caseId && !report.id) {
+        report.id = report.caseId;
+      }
+      if (report.trustScore !== undefined && report.trust_score === undefined) {
+        report.trust_score = report.trustScore;
+      }
+
       toast.success("Report submitted successfully");
       navigate(`/success`, { 
         state: { 
