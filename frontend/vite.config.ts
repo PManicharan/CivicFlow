@@ -9,19 +9,20 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router')) {
+          // Make matches agnostic to package managers (npm vs Yarn PnP) and OS paths
+          if (/[\\/](react|react-dom|react-router-dom)[\\/]/.test(id) || id.includes('.yarn') && id.includes('react')) {
             return 'react-vendor';
           }
-          if (id.includes('node_modules/firebase/')) {
+          if (/[\\/]firebase[\\/]/.test(id) || id.includes('.yarn') && id.includes('firebase')) {
             return 'firebase-vendor';
           }
-          if (id.includes('node_modules/framer-motion/')) {
+          if (/[\\/]framer-motion[\\/]/.test(id) || id.includes('.yarn') && id.includes('framer-motion')) {
             return 'framer-motion-vendor';
           }
-          if (id.includes('node_modules/leaflet/') || id.includes('node_modules/react-leaflet/')) {
+          if (/[\\/](leaflet|react-leaflet)[\\/]/.test(id) || id.includes('.yarn') && id.includes('leaflet')) {
             return 'leaflet-vendor';
           }
-          if (id.includes('node_modules/lucide-react/') || id.includes('node_modules/sonner/') || id.includes('node_modules/clsx/') || id.includes('node_modules/tailwind-merge/')) {
+          if (/[\\/](lucide-react|sonner|clsx|tailwind-merge)[\\/]/.test(id) || id.includes('.yarn') && (id.includes('lucide-react') || id.includes('sonner'))) {
             return 'ui-vendor';
           }
         },
