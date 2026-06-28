@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { Map, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -24,7 +22,8 @@ export function WorkspaceLogin() {
     setError('');
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Temporarily bypass authentication for demonstration
+      // await signInWithEmailAndPassword(auth, email, password);
       const from = (location.state as any)?.from?.pathname || '/workspace/operations';
       navigate(from, { replace: true });
       } catch {

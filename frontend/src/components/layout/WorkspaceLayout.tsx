@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
+import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, PanelLeftClose, PanelLeftOpen, LayoutDashboard, Settings, BrainCircuit, LogOut, ChartNoAxesCombined } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext';
 import { auth } from '../../lib/firebase';
 import { signOut } from 'firebase/auth';
 
 export function WorkspaceLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { currentUser } = useAuth();
+  // const { currentUser } = useAuth();
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return localStorage.getItem('civicflow-sidebar-collapsed') === 'true';
@@ -40,9 +40,10 @@ export function WorkspaceLayout() {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  if (!currentUser) {
-    return <Navigate to="/workspace/login" state={{ from: location }} replace />;
-  }
+  // Temporarily disabled for demonstration
+  // if (!currentUser) {
+  //   return <Navigate to="/workspace/login" state={{ from: location }} replace />;
+  // }
 
   const handleLogout = async () => {
     try {

@@ -14,7 +14,7 @@ export function SuccessExperience() {
 
   const { report } = state;
   const trustScore = report.trust_score || 85;
-  const caseId = report.id || report.case_id || 'CF-NEW-CASE';
+  const caseId = report.caseId || report.id || report.case_id || 'CF-NEW-CASE';
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl min-h-[80vh] flex flex-col justify-center items-center">

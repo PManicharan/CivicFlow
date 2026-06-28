@@ -6,8 +6,6 @@ import { ServerCrash, SearchX, Globe } from 'lucide-react';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Skeleton } from '../components/ui/Skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
 
 export function CommunityDashboard() {
   const navigate = useNavigate();
@@ -18,25 +16,30 @@ export function CommunityDashboard() {
   const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    try {
-      const q = query(collection(db, 'signals'), orderBy('created_at', 'desc'));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let intervalId: number;
+    
+    const fetchSignals = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/signals`);
+        if (!response.ok) throw new Error('Failed to fetch signals');
+        
+        const data = await response.json();
         setSignals(data);
+        setError(null);
+      } catch (err: any) {
+        console.error("API Fetch Error:", err);
+        setError(err.message || "Failed to load reports. Check network.");
+      } finally {
         setLoading(false);
-      }, (err) => {
-        console.error("Firestore Error:", err);
-        setError("Failed to listen for realtime updates. Check permissions or network.");
-        setLoading(false);
-      });
+      }
+    };
 
-      return () => unsubscribe();
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
-      setLoading(false);
-    }
+    setLoading(true);
+    fetchSignals();
+    intervalId = window.setInterval(fetchSignals, 5000);
+
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const handleRowClick = (signal: any) => {
